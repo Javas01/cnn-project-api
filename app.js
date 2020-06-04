@@ -1,11 +1,14 @@
 const axios = require('axios');
 const express = require ('express')
+const cors = require ('cors')
 const app = express()
+require ('dotenv').config()
 
 app.use(express.json())
+app.use(cors())
 
 const config = {
-  headers: { Authorization: 'Bearer AAAAAAAAAAAAAAAAAAAAAAppEwEAAAAAlAQu9NZhqmMt7Pe3NwMSXiGsdXE%3DqUEiGSOjB57BLQi0Yn5fJKzVyqt4CwWb5pDWcN5DPN2KYd5Ko9' }
+  headers: { Authorization: `Bearer ${process.env.BEARER_TOKEN}` }
 };
 
 let feed
@@ -21,7 +24,7 @@ app.get('/feed', (req, res) => {
       console.log(error.response.body);
     }
   })();
-  res.header('Access-Control-Allow-Origin', 'http://localhost:3000')
+  // res.header('Access-Control-Allow-Origin', '*')
 })
 
-app.listen(3001)
+app.listen(process.env.PORT || 3001)
