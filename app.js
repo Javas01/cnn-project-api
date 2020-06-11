@@ -51,7 +51,7 @@ app.get('/feed', (req, res) => {
       console.log(error)
     }
   })()
-  res.header('Access-Control-Allow-Origin', '*')
+  // res.header('Access-Control-Allow-Origin', '*')
 })
 
 app.listen(process.env.PORT || 3001)
