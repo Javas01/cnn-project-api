@@ -23,7 +23,6 @@ app.get('/feed', (req, res) => {
   (async () => {
     try {
       const response = await axios.get('https://api.twitter.com/1.1/statuses/user_timeline.json\?screen_name\=cnn\&count\=4', config)
-      await response.data
       await response.data.map(item => {
         Tweet.find({ body: item.text })
           .then((data) => {
@@ -42,7 +41,7 @@ app.get('/feed', (req, res) => {
       Tweet.find({ })
         .then(data => {
           console.log('Data:', data)
-          res.send(data)
+          res.json(data)
         })
         .catch(error => {
           console.log('Error:', error)
