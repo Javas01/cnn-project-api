@@ -42,7 +42,7 @@ app.get('/feed', (req, res) => {
       Tweet.find({ })
         .then(data => {
           console.log('Data:', data)
-          res.json(data)
+          res.send(data)
         })
         .catch(error => {
           console.log('Error:', error)
