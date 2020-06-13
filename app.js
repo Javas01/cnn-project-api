@@ -19,26 +19,29 @@ const config = {
   headers: { Authorization: `Bearer ${process.env.BEARER_TOKEN}` }
 }
 
-app.get('/feed', (req, res) => {
+app.get('/feed/:screenName', (req, res) => {
   (async () => {
     try {
-      const response = await axios.get('https://api.twitter.com/1.1/statuses/user_timeline.json\?screen_name\=cnn\&count\=4', config)
+      const response = await axios.get(`https://api.twitter.com/1.1/statuses/user_timeline.json\?screen_name\=${req.params.screenName}\&count\=4`, config)
+      // console.log(response.data)
       await response.data.map(item => {
-        Tweet.find({ body: item.text })
+        Tweet.find({ text: item.text })
           .then((data) => {
+            console.log(data)
             if (data[0] === undefined) {
               new Tweet({
-                user: item.user.name,
-                body: item.text,
-                date: item.created_at
+                screen_name: item.user.screen_name,
+                name: item.user.name,
+                text: item.text,
+                created_at: item.created_at
               }).save(err => {
                 if (err) return console.error(err)
                 console.log('tweet saved to database')
               })
-            } else {}
+            }
           })
       })
-      Tweet.find({ })
+      Tweet.find({ screen_name: req.params.screenName })
         .then(data => {
           console.log('Data:', data)
           res.json(data)
@@ -50,7 +53,6 @@ app.get('/feed', (req, res) => {
       console.log(error)
     }
   })()
-  // res.header('Access-Control-Allow-Origin', '*')
 })
 
 app.listen(process.env.PORT || 3001)
