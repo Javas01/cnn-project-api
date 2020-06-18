@@ -10,7 +10,7 @@ const Tweet = require('./models/tweet')
 app.use(express.json())
 app.use(cors())
 
-mongoose.connect(process.env.MONGODB_URI || 'mongodb+srv://jawwaad:bfjYkI9h0oJOuuti@cnn-database-jmbns.mongodb.net/cnn-project?retryWrites=true&w=majority', {
+mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }, () => { console.log('connected') })
