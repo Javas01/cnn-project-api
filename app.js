@@ -23,32 +23,22 @@ app.get('/feed/:screenName', (req, res) => {
   (async () => {
     try {
       const response = await axios.get(`https://api.twitter.com/1.1/statuses/user_timeline.json\?screen_name\=${req.params.screenName}\&count\=100`, config)
-      // console.log(response.data)
-      await response.data.map(item => {
-        Tweet.find({ text: item.text })
-          .then((data) => {
-            console.log(data)
-            if (data[0] === undefined) {
-              new Tweet({
-                screen_name: item.user.screen_name.toLowerCase(),
-                name: item.user.name,
-                text: item.text,
-                created_at: item.created_at
-              }).save(err => {
-                if (err) return console.error(err)
-                console.log('tweet saved to database')
-              })
-            }
+      const savedData = response.data.map(async (item) => {
+        const data = await Tweet.find({ text: item.text })
+        if (data[0] === undefined) {
+          new Tweet({
+            screen_name: item.user.screen_name.toLowerCase(),
+            name: item.user.name,
+            text: item.text,
+            created_at: item.created_at
+          }).save(err => {
+            if (err) return console.error(err)
           })
+        }
       })
-      Tweet.find({ screen_name: req.params.screenName.toLowerCase() })
-        .then(data => {
-          console.log('Data:', data)
-          res.json(data)
-        })
-        .catch(error => {
-          console.log('Error:', error)
-        })
+      await Promise.all(savedData)
+      const data = await Tweet.find({ screen_name: req.params.screenName.toLowerCase() })
+      res.json(data)
     } catch (error) {
       console.log(error)
     }
