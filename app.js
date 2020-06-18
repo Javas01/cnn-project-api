@@ -22,7 +22,7 @@ const config = {
 app.get('/feed/:screenName', (req, res) => {
   (async () => {
     try {
-      const response = await axios.get(`https://api.twitter.com/1.1/statuses/user_timeline.json\?screen_name\=${req.params.screenName}\&count\=4`, config)
+      const response = await axios.get(`https://api.twitter.com/1.1/statuses/user_timeline.json\?screen_name\=${req.params.screenName}\&count\=100`, config)
       // console.log(response.data)
       await response.data.map(item => {
         Tweet.find({ text: item.text })
@@ -30,7 +30,7 @@ app.get('/feed/:screenName', (req, res) => {
             console.log(data)
             if (data[0] === undefined) {
               new Tweet({
-                screen_name: item.user.screen_name,
+                screen_name: item.user.screen_name.toLowerCase(),
                 name: item.user.name,
                 text: item.text,
                 created_at: item.created_at
@@ -41,7 +41,7 @@ app.get('/feed/:screenName', (req, res) => {
             }
           })
       })
-      Tweet.find({ screen_name: req.params.screenName })
+      Tweet.find({ screen_name: req.params.screenName.toLowerCase() })
         .then(data => {
           console.log('Data:', data)
           res.json(data)
